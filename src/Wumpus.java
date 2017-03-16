@@ -127,15 +127,15 @@ public class Wumpus extends JFrame
         Fact f8 = new Fact( 0, 0, "Pit", false );
         Fact f9 = new Fact( 0, 0, "Wumpus", false );
         Fact f10 = new Fact( 0, 0, "Arrow", false );
-        Rule r1 = new Rule( f1, f2, null, null, null, Connector.Conjunction, Type.Facts );
-        Rule r2 = new Rule( f3, f4, null, null, null, Connector.Conjunction, Type.Facts );
-        Rule r3 = new Rule( f5, f6, null, null, null, Connector.Conjunction, Type.Facts );
-        Rule r4 = new Rule( f7, f8, null, null, null, Connector.Conjunction, Type.Facts );
-        Rule r5 = new Rule( f9, f10, null, null, null, Connector.Conjunction, Type.Facts );
-        Rule r6 = new Rule( null, null, r1, r2, null, Connector.Conjunction, Type.Rules );
-        Rule r7 = new Rule( null, null, r3, r4, null, Connector.Conjunction, Type.Rules );
-        Rule r8 = new Rule( null, null, r6, r7, null, Connector.Conjunction, Type.Rules );
-        Rule r9 = new Rule( null, null, r8, r5, null, Connector.Conjunction, Type.Rules );
+        Rule r1 = new Rule( f1, f2, null, null, null, Connector.Conjunction, RuleFactType.Facts );
+        Rule r2 = new Rule( f3, f4, null, null, null, Connector.Conjunction, RuleFactType.Facts );
+        Rule r3 = new Rule( f5, f6, null, null, null, Connector.Conjunction, RuleFactType.Facts );
+        Rule r4 = new Rule( f7, f8, null, null, null, Connector.Conjunction, RuleFactType.Facts );
+        Rule r5 = new Rule( f9, f10, null, null, null, Connector.Conjunction, RuleFactType.Facts );
+        Rule r6 = new Rule( null, null, r1, r2, null, Connector.Conjunction, RuleFactType.Rules );
+        Rule r7 = new Rule( null, null, r3, r4, null, Connector.Conjunction, RuleFactType.Rules );
+        Rule r8 = new Rule( null, null, r6, r7, null, Connector.Conjunction, RuleFactType.Rules );
+        Rule r9 = new Rule( null, null, r8, r5, null, Connector.Conjunction, RuleFactType.Rules );
         KB.Tell( r9 );
     }
 
@@ -160,10 +160,10 @@ public class Wumpus extends JFrame
         Fact f3 = new Fact( x, y, "Glitter", glitter );
         Fact f4 = new Fact( x, y, "Bump", bump );
         Fact f5 = new Fact( x, y, "Scream", scream );
-        Rule r1 = new Rule( f1, f2, null, null, null, Connector.Conjunction, Type.Facts );
-        Rule r2 = new Rule( f3, f4, null, null, null, Connector.Conjunction, Type.Facts );
-        Rule r3 = new Rule( null, null, r1, r2, null, Connector.Conjunction, Type.Rules );
-        Rule rule = new Rule( f5, null, r3, null, null, Connector.Conjunction, Type.FactAndRule );
+        Rule r1 = new Rule( f1, f2, null, null, null, Connector.Conjunction, RuleFactType.Facts );
+        Rule r2 = new Rule( f3, f4, null, null, null, Connector.Conjunction, RuleFactType.Facts );
+        Rule r3 = new Rule( null, null, r1, r2, null, Connector.Conjunction, RuleFactType.Rules );
+        Rule rule = new Rule( f5, null, r3, null, null, Connector.Conjunction, RuleFactType.FactAndRule );
 
         KB.Tell( rule );
 
@@ -203,7 +203,7 @@ public class Wumpus extends JFrame
             Elements[Agent.X][Agent.Y].Glitter = false;
             Perceived[Agent.X][Agent.Y].Glitter = false;
             Rule empty = new Rule();
-            Rule rule = new Rule( foundGold, null, empty, null, null, Connector.Empty, Type.FactAndRule );
+            Rule rule = new Rule( foundGold, null, empty, null, null, Connector.Empty, RuleFactType.FactAndRule );
             KB.UndoTell( rule );
         }
         Position NewPos = FindMove();
@@ -273,14 +273,14 @@ public class Wumpus extends JFrame
         Fact noWumpus = new Fact( x, y, "Wumpus", false );
         Fact noPit = new Fact( x, y, "Pit", false );
         Fact safe = new Fact( x, y, "Safe", true );
-        Rule alpha = new Rule( noWumpus, noPit, null, null, null, Connector.Conjunction, Type.Facts );
-        Rule beta = new Rule( safe, null, null, null, null, Connector.Disjunction, Type.Facts );
-        Rule cellSafe = new Rule( null, null, alpha, beta, null, Connector.Implication, Type.Rules );
+        Rule alpha = new Rule( noWumpus, noPit, null, null, null, Connector.Conjunction, RuleFactType.Facts );
+        Rule beta = new Rule( safe, null, null, null, null, Connector.Disjunction, RuleFactType.Facts );
+        Rule cellSafe = new Rule( null, null, alpha, beta, null, Connector.Implication, RuleFactType.Rules );
 
         if( KB.Ask( safe ) == true )
         {
             Perceived[x][y].Safe = true;
-            Rule thisCellisSafe = new Rule( safe, null, null, null, null, Connector.Disjunction, Type.Facts );
+            Rule thisCellisSafe = new Rule( safe, null, null, null, null, Connector.Disjunction, RuleFactType.Facts );
             KB.Tell( thisCellisSafe );
             return true;
         }
@@ -305,9 +305,9 @@ public class Wumpus extends JFrame
         Fact arrow = new Fact( x, y, "Arrow", true );
         Fact wumpus = new Fact( x, y, "Wumpus", true );
         Fact scream = new Fact( x, y, "Scream", true );
-        Rule alpha = new Rule( arrow, wumpus, null, null, null, Connector.Conjunction, Type.Facts );
-        Rule beta = new Rule( scream, null, null, null, null, Connector.Disjunction, Type.Facts );
-        Rule wumpusdeadrule = new Rule( null, null, alpha, beta, null, Connector.Implication, Type.Rules );
+        Rule alpha = new Rule( arrow, wumpus, null, null, null, Connector.Conjunction, RuleFactType.Facts );
+        Rule beta = new Rule( scream, null, null, null, null, Connector.Disjunction, RuleFactType.Facts );
+        Rule wumpusdeadrule = new Rule( null, null, alpha, beta, null, Connector.Implication, RuleFactType.Rules );
         KB.Tell( wumpusdeadrule );
 
         if( KB.Ask( scream ) )
@@ -315,7 +315,7 @@ public class Wumpus extends JFrame
             Perceived[x][y].Wumpus = false;
             Elements[x][y].Wumpus = false;
             RemoveStenches( x, y );
-            Rule screamRule = new Rule( scream, null, null, null, null, Connector.Disjunction, Type.Facts );
+            Rule screamRule = new Rule( scream, null, null, null, null, Connector.Disjunction, RuleFactType.Facts );
             KB.Tell( screamRule );
         }
     }

@@ -31,14 +31,14 @@ public class KnowledgeBase
             if( ptr.connector == cancelRule.connector && ptr.type == cancelRule.type )
             {
                 boolean allFactsEqual = false;
-                if( ptr.type == Type.Facts )
+                if( ptr.type == RuleFactType.Facts )
                 {
                     if( ptr.F1.isSameAs( cancelRule.F1 ) && ptr.F2.isSameAs( cancelRule.F2 ) )
                     {
                         allFactsEqual = true;
                     }
                 }
-                else if( ptr.type == Type.FactAndRule )
+                else if( ptr.type == RuleFactType.FactAndRule )
                 {
                     if( ptr.F1.isSameAs( cancelRule.F1 ) && ptr.R2.F1.isSameAs( cancelRule.R2.F1 )
                             && ptr.R2.F2.isSameAs( cancelRule.R2.F2 ) )
@@ -46,7 +46,7 @@ public class KnowledgeBase
                         allFactsEqual = true;
                     }
                 }
-                else if( ptr.type == Type.RuleAndFact )
+                else if( ptr.type == RuleFactType.RuleAndFact )
                 {
                     if( ptr.F2.isSameAs( cancelRule.F2 ) && ptr.R1.F1.isSameAs( cancelRule.R1.F1 )
                             && ptr.R1.F2.isSameAs( cancelRule.R1.F2 ) )
@@ -54,7 +54,7 @@ public class KnowledgeBase
                         allFactsEqual = true;
                     }
                 }
-                else if( ptr.type == Type.Rules )
+                else if( ptr.type == RuleFactType.Rules )
                 {
                     if( ptr.R1.F1.isSameAs( cancelRule.R1.F1 ) && ptr.R1.F2.isSameAs( cancelRule.R1.F2 )
                             && ptr.R2.F1.isSameAs( cancelRule.R2.F1 ) && ptr.R2.F2.isSameAs( cancelRule.R2.F2 ) )
@@ -62,7 +62,7 @@ public class KnowledgeBase
                         allFactsEqual = true;
                     }
                 }
-                else System.out.println( "UndoTell: Unidentified Type" );
+                else System.out.println( "UndoTell: Unidentified RuleFactType" );
                 if( allFactsEqual )
                 {
                     ptr.Next = ptr.Next.Next;
@@ -176,13 +176,13 @@ public class KnowledgeBase
             flipped.R1 = rule.R2;
             flipped.R2 = rule.R1;
             flipped.connector = rule.connector;
-            if( rule.type == Type.FactAndRule )
+            if( rule.type == RuleFactType.FactAndRule )
             {
-                flipped.type = Type.RuleAndFact;
+                flipped.type = RuleFactType.RuleAndFact;
             }
-            else if( rule.type == Type.FactAndRule )
+            else if( rule.type == RuleFactType.FactAndRule )
             {
-                flipped.type = Type.RuleAndFact;
+                flipped.type = RuleFactType.RuleAndFact;
             }
             else flipped.type = rule.type;
 
@@ -210,11 +210,11 @@ public class KnowledgeBase
     public Literal Conjunction( Rule rule )
     {
         Literal first = null;
-        if( rule.type == Type.Facts || rule.type == Type.FactAndRule )
+        if( rule.type == RuleFactType.Facts || rule.type == RuleFactType.FactAndRule )
         {
             first = new Literal( rule.F1 );
         }
-        else if( rule.type == Type.RuleAndFact || rule.type == Type.Rules )
+        else if( rule.type == RuleFactType.RuleAndFact || rule.type == RuleFactType.Rules )
         {
             first = CNF( rule.R1 );
         }
@@ -225,13 +225,13 @@ public class KnowledgeBase
     public Literal Disjunction( Rule rule )
     {
         Literal first = null, second = null;
-        if( rule.type == Type.Facts )
+        if( rule.type == RuleFactType.Facts )
         {
             first = new Literal( rule.F1 );
             second = new Literal( rule.F2 );
             first.Next = second;
         }
-        else if( rule.type == Type.FactAndRule )
+        else if( rule.type == RuleFactType.FactAndRule )
         {
             first = new Literal( rule.F1 );
             if( rule.R2.connector == Connector.Conjunction || rule.R2.connector == Connector.Biconditional )
@@ -271,12 +271,12 @@ public class KnowledgeBase
             }
 
         }
-        else if( rule.type == Type.RuleAndFact )
+        else if( rule.type == RuleFactType.RuleAndFact )
         {
-            Rule reversed = new Rule( rule.F2, null, rule.R1, null, null, Connector.Disjunction, Type.FactAndRule );
+            Rule reversed = new Rule( rule.F2, null, rule.R1, null, null, Connector.Disjunction, RuleFactType.FactAndRule );
             return Disjunction( reversed );
         }
-        else if( rule.type == Type.Rules )
+        else if( rule.type == RuleFactType.Rules )
         {
             first = CNF( rule.R1 );
             second = CNF( rule.R2 );
@@ -290,7 +290,7 @@ public class KnowledgeBase
     public Literal Implication( Rule rule )
     {
         Literal notAlpha = null;
-        if( rule.type == Type.Facts )
+        if( rule.type == RuleFactType.Facts )
         {
             notAlpha = new Literal( rule.F1 );
             Literal beta = new Literal( rule.F2 );
@@ -299,7 +299,7 @@ public class KnowledgeBase
             notAlpha.Next = beta;
             return notAlpha;
         }
-        else if( rule.type == Type.FactAndRule )
+        else if( rule.type == RuleFactType.FactAndRule )
         {
             notAlpha = new Literal( rule.F1 );
             notAlpha.Val = false;
@@ -308,7 +308,7 @@ public class KnowledgeBase
             notAlpha.Next = beta;
             return notAlpha;
         }
-        else if( rule.type == Type.RuleAndFact )
+        else if( rule.type == RuleFactType.RuleAndFact )
         {
             notAlpha = CNF( rule.R1 );
             Negate( notAlpha );
@@ -318,7 +318,7 @@ public class KnowledgeBase
             cur.Next = beta;
             return notAlpha;
         }
-        else if( rule.type == Type.Rules )
+        else if( rule.type == RuleFactType.Rules )
         {
             notAlpha = CNF( rule.R1 );
             Negate( notAlpha );
@@ -355,25 +355,25 @@ public class KnowledgeBase
     {
         Rule alpha, beta;
         alpha = beta = null;
-        if( rule.type == Type.Facts )
+        if( rule.type == RuleFactType.Facts )
         {
-            alpha = new Rule( rule.F1, rule.F2, null, null, null, Connector.Implication, Type.Facts );
-            beta = new Rule( rule.F2, rule.F1, null, null, null, Connector.Implication, Type.Facts );
+            alpha = new Rule( rule.F1, rule.F2, null, null, null, Connector.Implication, RuleFactType.Facts );
+            beta = new Rule( rule.F2, rule.F1, null, null, null, Connector.Implication, RuleFactType.Facts );
         }
-        else if( rule.type == Type.FactAndRule )
+        else if( rule.type == RuleFactType.FactAndRule )
         {
-            alpha = new Rule( rule.F1, null, null, rule.R1, null, Connector.Implication, Type.FactAndRule );
-            beta = new Rule( null, rule.F1, rule.R1, null, null, Connector.Implication, Type.RuleAndFact );
+            alpha = new Rule( rule.F1, null, null, rule.R1, null, Connector.Implication, RuleFactType.FactAndRule );
+            beta = new Rule( null, rule.F1, rule.R1, null, null, Connector.Implication, RuleFactType.RuleAndFact );
         }
-        else if( rule.type == Type.RuleAndFact )
+        else if( rule.type == RuleFactType.RuleAndFact )
         {
-            alpha = new Rule( null, rule.F1, rule.R1, null, null, Connector.Implication, Type.RuleAndFact );
-            beta = new Rule( rule.F1, null, null, rule.R1, null, Connector.Implication, Type.FactAndRule );
+            alpha = new Rule( null, rule.F1, rule.R1, null, null, Connector.Implication, RuleFactType.RuleAndFact );
+            beta = new Rule( rule.F1, null, null, rule.R1, null, Connector.Implication, RuleFactType.FactAndRule );
         }
-        else if( rule.type == Type.Rules )
+        else if( rule.type == RuleFactType.Rules )
         {
-            alpha = new Rule( null, null, rule.R1, rule.R2, null, Connector.Implication, Type.Rules );
-            beta = new Rule( null, null, rule.R2, rule.R1, null, Connector.Implication, Type.Rules );
+            alpha = new Rule( null, null, rule.R1, rule.R2, null, Connector.Implication, RuleFactType.Rules );
+            beta = new Rule( null, null, rule.R2, rule.R1, null, Connector.Implication, RuleFactType.Rules );
         }
         else
         {

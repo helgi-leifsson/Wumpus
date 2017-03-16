@@ -7,7 +7,6 @@
  */
 
 enum Connector { Empty, Conjunction, Disjunction, Implication, Biconditional }
-enum Type { Empty, Facts, FactAndRule, RuleAndFact, Rules }
 
 //Datastructure for rules stored in the Knowledge base
 public class Rule
@@ -20,7 +19,7 @@ public class Rule
 
     public Connector connector;
 
-    public Type type;
+    public RuleFactType type;
 
     public Rule()
     {
@@ -30,10 +29,10 @@ public class Rule
         R2 = null;
         Next = null;
         connector = Connector.Empty;
-        type = Type.Empty;
+        type = RuleFactType.Empty;
     }
 
-    public Rule( Fact f1, Fact f2, Rule r1, Rule r2, Rule next, Connector c, Type t )
+    public Rule( Fact f1, Fact f2, Rule r1, Rule r2, Rule next, Connector c, RuleFactType t )
     {
         F1 = f1;
         F2 = f2;
