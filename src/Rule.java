@@ -7,6 +7,7 @@
  */
 
 enum Connector { Empty, Conjunction, Disjunction, Implication, Biconditional }
+enum RuleFactType { Empty, Facts, FactAndRule, RuleAndFact, Rules }
 
 //Datastructure for rules stored in the Knowledge base
 public class Rule

@@ -21,13 +21,16 @@ public class Wumpus extends JFrame
     private int iHeight;    //Height of program frame
     private JButton jbnNext;
 
-    private int xGold, yGold;   //Location of gold
+    //private int xGold, yGold;   //Location of gold
     private static Cell[][] Perceived;  //What the agent has perceived so far
     private static Cell[][] Elements;   //The actual environment
     private static KnowledgeBase KB;
     private static Position Agent;
     private static int xGridSize, yGridSize;    //Size of the environment
     private static Wumpus wumpus;
+
+    private int cellPixels = 50;
+    private int gridBorder = 100;
 
     public Wumpus()
     {
@@ -43,8 +46,8 @@ public class Wumpus extends JFrame
 
         setVisible( true );
 
-        xGold = 35;
-        yGold = 230;
+//        xGold = 35;
+//        yGold = 230;
 
         xGridSize = yGridSize = 4;
 
@@ -67,25 +70,80 @@ public class Wumpus extends JFrame
 
     public void drawGrid( Graphics g )
     {
-        for( int x = 35; x <= 235; x += 50 )
+        DrawVerticalGridLines(g);
+        DrawHorizontalGridLines(g);
+    }
+
+    private void DrawVerticalGridLines(Graphics g)
+    {
+        for(int line = 0; line <= xGridSize; line++)
         {
-            g.drawLine( x, 55, x, 255 );
-        }
-        for( int y = 55; y <= 255; y += 50 )
-        {
-            g.drawLine( 35, y, 235, y );
+            int x = (line * cellPixels) + gridBorder;
+            int yUpper = gridBorder;
+            int yLower = (yGridSize * cellPixels) + gridBorder;
+            g.drawLine(x, yUpper, x, yLower);
         }
     }
 
-    public void drawGold( Graphics g, int x, int y )
+    private void DrawHorizontalGridLines(Graphics g)
     {
-        g.drawString( "Gold", x, y );
+        for(int line = 0; line <= yGridSize; line++)
+        {
+            int xLeft = gridBorder;
+            int xRight = (yGridSize * cellPixels) + gridBorder;
+            int y = (line * cellPixels) + gridBorder;
+            g.drawLine(xLeft, y, xRight, y);
+        }
     }
 
     public void paint( Graphics g )
     {
         drawGrid( g );
-        drawGold( g, 35, 230 );
+        drawMap(g);
+    }
+
+    public void drawMap(Graphics g)
+    {
+        for(int x = 0; x < xGridSize; x++)
+        {
+            for(int y = 0; y < yGridSize; y++)
+            {
+                int cellRow = 0;
+                if(Elements[x][y].Pit == true)
+                {
+                    PlaceEntityOnMap(g, "Pit", x, y, cellRow++);
+                }
+                if(Elements[x][y].Glitter == true)
+                {
+                    PlaceEntityOnMap(g, "Glitter", x, y, cellRow++);
+                }
+                if(Elements[x][y].Stench == true)
+                {
+                    PlaceEntityOnMap(g, "Stench", x, y, cellRow++);
+                }
+                if(Elements[x][y].Breeze == true)
+                {
+                    PlaceEntityOnMap(g, "Breeze", x, y, cellRow++);
+                }
+                if(Elements[x][y].Arrow == true)
+                {
+                    PlaceEntityOnMap(g, "Arrow", x, y, cellRow++);
+                }
+                if(Elements[x][y].Wumpus == true)
+                {
+                    PlaceEntityOnMap(g, "Wumpus", x, y, cellRow++);
+                }
+            }
+        }
+    }
+
+    private void PlaceEntityOnMap(Graphics g, String entity, int xCell, int yCell, int cellRow)
+    {
+        Coordinate coordinate = new Coordinate(cellPixels, yGridSize);
+        int yFrameCoordinate = coordinate.ChangeYCellNumberToYPixelCoordinate(yCell);
+        int x = (cellPixels * xCell) + gridBorder;
+        int y = (yFrameCoordinate + gridBorder) - (cellRow * 10);
+        g.drawString(entity, x, y);
     }
 
     public static void main( String[] args )
@@ -96,8 +154,8 @@ public class Wumpus extends JFrame
         InitializeMap();
         InitKB();
 
-        Fact foundGold = new Fact( Agent.X, Agent.Y, "Glitter", true );
-        if( KB.Ask( foundGold ) ) System.out.println( "Gold" );
+        //Fact foundGold = new Fact( Agent.X, Agent.Y, "Glitter", true );
+        //if( KB.Ask( foundGold ) ) System.out.println( "Gold" );
         /*int moves = 0;
         int maxmoves = 20;
         while( moves < maxmoves )
@@ -139,12 +197,75 @@ public class Wumpus extends JFrame
         KB.Tell( r9 );
     }
 
-    //TODO
+    //Figure 7.2 from page 238 in Russell and Norvigs book
+    //TODO Method that automatically fills in breezes and stenches when pits and Wumpuses are placed on the map.
     public static void InitializeMap()
     {
-        Cell gold = new Cell();
+        /*Cell gold = new Cell();
         gold.Glitter = true;
-        Elements[0][0] = gold;
+        Elements[0][0] = gold;*/
+
+        Cell cell00 = new Cell();
+        Elements[0][0] = cell00;
+
+        Cell cell01 = new Cell();
+        cell01.Stench = true;
+        Elements[0][1] = cell01;
+
+        Cell cell02 = new Cell();
+        cell02.Wumpus = true;
+        Elements[0][2] = cell02;
+
+        Cell cell03 = new Cell();
+        cell03.Stench = true;
+        Elements[0][3] = cell03;
+
+        Cell cell10 = new Cell();
+        cell10.Breeze = true;
+        Elements[1][0] = cell10;
+
+        Cell cell11 = new Cell();
+        Elements[1][1] = cell11;
+
+        Cell cell12 = new Cell();
+        cell12.Breeze = true;
+        cell12.Stench = true;
+        cell12.Glitter = true;
+        Elements[1][2] = cell12;
+
+        Cell cell13 = new Cell();
+        Elements[1][3] = new Cell();
+
+        Cell cell20 = new Cell();
+        cell20.Pit = true;
+        Elements[2][0] = cell20;
+
+        Cell cell21 = new Cell();
+        cell21.Breeze = true;
+        Elements[2][1] = cell21;
+
+        Cell cell22 = new Cell();
+        cell22.Pit = true;
+        Elements[2][2] = cell22;
+
+        Cell cell23 = new Cell();
+        cell23.Breeze = true;
+        Elements[2][3] = cell23;
+
+        Cell cell30 = new Cell();
+        cell30.Breeze = true;
+        Elements[3][0] = cell30;
+
+        Cell cell31 = new Cell();
+        Elements[3][1] = cell31;
+
+        Cell cell32 = new Cell();
+        cell32.Breeze = true;
+        Elements[3][2] = cell32;
+
+        Cell cell33 = new Cell();
+        cell33.Pit = true;
+        Elements[3][3] = cell33;
     }
 
     public static void Sense( int x, int y ) //Senses the environment in a cell
