@@ -22,25 +22,25 @@ public class Fact
         Val = false;
     }
 
-    public Fact( int x, int y, String what, boolean val )
+    public Fact(int x, int y, String what, boolean val)
     {
         X = x;
         Y = y;
-        What = new String( what );
+        What = new String(what);
         Val = val;
     }
 
-    public Fact( Fact fact )
+    public Fact(Fact fact)
     {
         X = fact.X;
         Y = fact.Y;
-        What = new String( fact.What );
+        What = new String(fact.What);
         Val = fact.Val;
     }
 
     //Compares two facts
-    public boolean isSameAs( Fact fact )
+    public boolean isSameAs(Fact fact)
     {
-        return ( X != fact.X || Y != fact.Y || !What.equals( fact.What ) || Val != fact.Val );
+        return X == fact.X && Y == fact.Y && What.equals(fact.What) && Val == fact.Val;
     }
 }

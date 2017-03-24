@@ -50,55 +50,71 @@ public class Literal
     }
 
     //For comparing two literals or literal lists
-    public boolean isSameClauseAs( Literal clause )
+    public boolean isSameClauseAs(Literal clause)
     {
         Literal cur = this;
-        while( cur != null )
+        //Rúlla gegnum alla literals í þessum literal lista...
+        while(cur != null)
         {
             Literal cur2 = clause;
             boolean same = false;
-            while( cur2 != null )
+            //...og bera saman við alla literals í hinum listanum...
+            while(cur2 != null)
             {
-                if( cur.fact.isSameAs( cur2.fact ) && cur.Val == cur2.Val )
+                //...og ef ein nóða finnst sem er eins og ein í hinum listanum...
+                if(cur.fact.isSameAs(cur2.fact) && cur.Val == cur2.Val)
                 {
+                    //...þá segjum við að þessar tvær setningar séu eins.
+                    //Hvernig getum við sagt að þessar klausur séu eins? Literals mynda klausur og klausur eru
+                    //literals tengdir saman með disjunctions. Af hverju er nóg að finna bara eina literal sem er eins?
+                    //Það er af því að það literal sem við erum að leita að gæti verið hvar sem er í klausunni sem
+                    //verið er að bera saman við. Uppröðunin getur verið ólík. Ef við finnum einhverja literal ekki
+                    //einhversstaðar í hinni klausunni þá augljóslega eru klausurnar ekki eins.
                     same = true;
                     break;
                 }
                 cur2 = cur2.Next;
             }
-            if( !same ) return false;
+            //Ef við fundum ekki eina einustu literal sem var eins þá segjum við að þessar tvær setningar séu ekki eins.
+            if(!same)
+            {
+                return false;
+            }
             cur = cur.Next;
         }
         return true;
     }
 
     //Whether this specific literal is the complementary of another literal
-    public boolean isComplementaryOf( Literal lit )
+    public boolean isComplementaryOf(Literal lit)
     {
-        return ( fact.isSameAs( lit.fact ) && Val != lit.Val );
+        return fact.isSameAs(lit.fact) && Val != lit.Val;
     }
 
     public boolean isEmpty()
     {
-        return( fact == null && Next == null );
+        return fact == null && Next == null;
     }
 
     //Adds a literal to the back of the list
-    public void Add( Literal lit )
+    public void Add(Literal lit)
     {
-        if( fact == null )
+        if(fact == null)
         {
-            fact = new Fact( lit.fact );
+            fact = new Fact(lit.fact);
             Head = true;
             Val = lit.Val;
             Next = null;
         }
         else
         {
-            Literal l = new Literal( lit );
+            Literal l = new Literal(lit);
             l.Head = false;
             Literal cur = this;
-            while( cur.Next != null ) cur = cur.Next;
+            while(cur.Next != null)
+            {
+                cur = cur.Next;
+            }
             cur.Next = l;
         }
     }

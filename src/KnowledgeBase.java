@@ -114,7 +114,7 @@ public class KnowledgeBase
         Knowledge newKb = new Knowledge();
         Knowledge curKb = cnfClauses;
         //Proves that the fact cannot be false given the current KB by proof of contradiction
-        //See discussion in chapter 7 of Artificial Intelligence: A modern approach, 3rd edition by Stuart Russel
+        //See discussion in chapter 7, figure 7.12 of Artificial Intelligence: A modern approach, 3rd edition by Stuart Russel
         //and Peter Norvig, 2010
         while( curKb.Next != null )
         {

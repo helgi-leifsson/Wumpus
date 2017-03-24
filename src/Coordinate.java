@@ -1,5 +1,6 @@
 /**
  * Created by Helgi on 18.3.2017.
+ * Functions for computing coordinates from various datastructure inputs.
  */
 public class Coordinate
 {

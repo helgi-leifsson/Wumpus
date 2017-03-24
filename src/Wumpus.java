@@ -51,6 +51,15 @@ public class Wumpus extends JFrame
 
         xGridSize = yGridSize = 4;
 
+        CreateDataStructures();
+
+        Agent = new Position( 0, 0 );
+        KB = new KnowledgeBase();
+
+    }
+
+    private void CreateDataStructures()
+    {
         Perceived = new Cell[xGridSize][yGridSize];
         Elements = new Cell[xGridSize][yGridSize];
         Cell emptyCell = new Cell();
@@ -62,10 +71,6 @@ public class Wumpus extends JFrame
                 Elements[I][J] = emptyCell;
             }
         }
-
-        Agent = new Position( 0, 0 );
-        KB = new KnowledgeBase();
-
     }
 
     public void drawGrid( Graphics g )
@@ -96,9 +101,9 @@ public class Wumpus extends JFrame
         }
     }
 
-    public void paint( Graphics g )
+    public void paint(Graphics g)
     {
-        drawGrid( g );
+        drawGrid(g);
         drawMap(g);
     }
 
@@ -108,30 +113,30 @@ public class Wumpus extends JFrame
         {
             for(int y = 0; y < yGridSize; y++)
             {
-                int cellRow = 0;
+                int rowInsideCell = 0;
                 if(Elements[x][y].Pit == true)
                 {
-                    PlaceEntityOnMap(g, "Pit", x, y, cellRow++);
+                    PlaceEntityOnMap(g, "Pit", x, y, rowInsideCell++);
                 }
                 if(Elements[x][y].Glitter == true)
                 {
-                    PlaceEntityOnMap(g, "Glitter", x, y, cellRow++);
+                    PlaceEntityOnMap(g, "Glitter", x, y, rowInsideCell++);
                 }
                 if(Elements[x][y].Stench == true)
                 {
-                    PlaceEntityOnMap(g, "Stench", x, y, cellRow++);
+                    PlaceEntityOnMap(g, "Stench", x, y, rowInsideCell++);
                 }
                 if(Elements[x][y].Breeze == true)
                 {
-                    PlaceEntityOnMap(g, "Breeze", x, y, cellRow++);
+                    PlaceEntityOnMap(g, "Breeze", x, y, rowInsideCell++);
                 }
                 if(Elements[x][y].Arrow == true)
                 {
-                    PlaceEntityOnMap(g, "Arrow", x, y, cellRow++);
+                    PlaceEntityOnMap(g, "Arrow", x, y, rowInsideCell++);
                 }
                 if(Elements[x][y].Wumpus == true)
                 {
-                    PlaceEntityOnMap(g, "Wumpus", x, y, cellRow++);
+                    PlaceEntityOnMap(g, "Wumpus", x, y, rowInsideCell++);
                 }
             }
         }
@@ -154,9 +159,12 @@ public class Wumpus extends JFrame
         InitializeMap();
         InitKB();
 
-        //Fact foundGold = new Fact( Agent.X, Agent.Y, "Glitter", true );
-        //if( KB.Ask( foundGold ) ) System.out.println( "Gold" );
-        /*int moves = 0;
+        HuntForGold();
+    }
+
+    public static void HuntForGold()
+    {
+        int moves = 0;
         int maxmoves = 20;
         while( moves < maxmoves )
         {
@@ -164,10 +172,10 @@ public class Wumpus extends JFrame
             {
                 Sense( Agent.X, Agent.Y );
             }
-            DisplayMap();
             Act();
             moves++;
-        }*/
+            wumpus.repaint();
+        }
     }
 
     public static void InitKB()
@@ -177,7 +185,7 @@ public class Wumpus extends JFrame
 
         Fact f1 = new Fact( 0, 0, "Stench", false );
         Fact f2 = new Fact( 0, 0, "Breeze", false );
-        Fact f3 = new Fact( 0, 0, "Glitter", true );
+        Fact f3 = new Fact( 0, 0, "Glitter", false );
         Fact f4 = new Fact( 0, 0, "Bump", true );
         Fact f5 = new Fact( 0, 0, "Scream", false );
         Fact f6 = new Fact( 0, 0, "Visited", true );
@@ -201,10 +209,6 @@ public class Wumpus extends JFrame
     //TODO Method that automatically fills in breezes and stenches when pits and Wumpuses are placed on the map.
     public static void InitializeMap()
     {
-        /*Cell gold = new Cell();
-        gold.Glitter = true;
-        Elements[0][0] = gold;*/
-
         Cell cell00 = new Cell();
         Elements[0][0] = cell00;
 
@@ -306,12 +310,6 @@ public class Wumpus extends JFrame
         Perceived[x][y].Glitter = glitter;
         Perceived[x][y].Bump = bump;
         Perceived[x][y].Scream = scream;
-    }
-
-    //TODO
-    public static void DisplayMap() //Redraws the map
-    {
-
     }
 
     //TODO
